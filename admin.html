@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Painel | R Tech</title>
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <a class="brand" href="admin.html"><span>⌁</span> R Tech</a>
+      <div>
+        <span id="adminName">Administrador</span
+        ><button id="logoutButton">Sair</button>
+      </div>
+    </header>
+    <main>
+      <section class="dashboard-title">
+        <div>
+          <p class="eyebrow">VISÃO GERAL</p>
+          <h1>Painel Administrativo</h1>
+          <p>Gerencie os pedidos de orçamento recebidos.</p>
+        </div>
+      </section>
+      <section class="stats">
+        <article><span>Novos</span><strong id="statNovo">—</strong></article>
+        <article>
+          <span>Em análise</span><strong id="statAnalise">—</strong>
+        </article>
+        <article>
+          <span>Aprovados</span><strong id="statAprovado">—</strong>
+        </article>
+        <article><span>Total</span><strong id="statTotal">—</strong></article>
+      </section>
+      <section class="orders-panel">
+        <div class="orders-header">
+          <div>
+            <h2>Orçamentos</h2>
+            <p id="orderCount">Carregando...</p>
+          </div>
+          <div class="filters">
+            <input id="search" placeholder="Pesquisar orçamento..." /><select
+              id="statusFilter"
+            >
+              <option value="todos">Todos os status</option>
+              <option value="novo">Novo</option>
+              <option value="em_analise">Em análise</option>
+              <option value="orcamento_enviado">Orçamento enviado</option>
+              <option value="aprovado">Aprovado</option>
+              <option value="em_manutencao">Em manutenção</option>
+              <option value="pronto">Pronto</option>
+              <option value="entregue">Entregue</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+        </div>
+        <div id="loading" class="loading">Carregando orçamentos...</div>
+        <div id="orders" class="orders"></div>
+      </section>
+    </main>
+    <div id="toast" class="toast"></div>
+    <dialog id="detailModal">
+      <section class="modal">
+        <button id="closeModal" class="close" aria-label="Fechar">×</button>
+        <div id="detailContent"></div>
+      </section>
+    </dialog>
+    <dialog id="imageModal" class="image-modal">
+      <button id="closeImage" aria-label="Fechar imagem">×</button>
+      <img id="largeImage" alt="Imagem ampliada" />
+    </dialog>
+    <script type="module" src="js/admin.js"></script>
+  </body>
+</html>

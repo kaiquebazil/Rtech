@@ -1,0 +1,14 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /orcamentos/{protocol}/{fileName} {
+      allow create: if request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*')
+        && fileName.matches('(frente|traseira)\\.jpg');
+      // A URL de download é gerada imediatamente pelo formulário público.
+      // Os caminhos usam um protocolo não reutilizado e o upload é bem limitado abaixo.
+      allow read: if true;
+      allow update, delete: if request.auth != null;
+    }
+  }
+}

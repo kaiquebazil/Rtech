@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Entrar | R Tech</title>
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  <body>
+    <main class="login-wrap">
+      <a class="brand" href="index.html"><span>⌁</span> R Tech</a>
+      <section class="login-card">
+        <p class="eyebrow">ÁREA RESTRITA</p>
+        <h1>Painel administrativo</h1>
+        <p>Acesse sua conta para gerenciar os orçamentos.</p>
+        <form id="loginForm" novalidate>
+          <label
+            >E-mail<input
+              id="email"
+              type="email"
+              autocomplete="email"
+              required
+              placeholder="voce@empresa.com" /></label
+          ><label
+            >Senha<input
+              id="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              placeholder="Sua senha"
+          /></label>
+          <div id="loginMessage" class="message" role="alert"></div>
+          <button id="loginButton" type="submit">Entrar <span>→</span></button>
+        </form>
+        <a href="index.html">← Voltar para o site</a>
+      </section>
+    </main>
+    <script type="module" src="js/auth.js"></script>
+  </body>
+</html>

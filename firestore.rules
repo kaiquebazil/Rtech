@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() { return request.auth != null; }
+
+    match /orcamentos/{id} {
+      allow create: if request.auth == null
+        && request.resource.data.keys().hasOnly(['protocolo', 'nome', 'telefone', 'marca', 'modelo', 'fotoFrente', 'fotoTraseira', 'servicos', 'outroServico', 'observacao', 'valor', 'status', 'criadoEm', 'atualizadoEm'])
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() > 1
+        && request.resource.data.nome.size() <= 100
+        && request.resource.data.telefone is string
+        && request.resource.data.telefone.size() >= 8
+        && request.resource.data.telefone.size() <= 20
+        && request.resource.data.modelo is string
+        && request.resource.data.modelo.size() > 0
+        && request.resource.data.modelo.size() <= 80
+        && request.resource.data.fotoFrente is string
+        && request.resource.data.fotoFrente.size() <= 410000
+        && request.resource.data.fotoTraseira is string
+        && request.resource.data.fotoTraseira.size() <= 410000
+        && request.resource.data.servicos is list
+        && request.resource.data.servicos.size() > 0
+        && request.resource.data.status == 'novo'
+        && request.resource.data.valor == null;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /configuracao/contadorOrcamentos {
+      allow read: if true;
+      allow update: if request.auth != null || (request.resource.data.keys().hasOnly(['ultimo']) && request.resource.data.ultimo == resource.data.ultimo + 1);
+      allow create, delete: if isAdmin();
+    }
+
+    // Documento público somente por leitura direta: o ID é hash de protocolo + telefone.
+    function validTrackingOrder(order) {
+      return order is map
+        && order.keys().hasOnly(['protocolo', 'aparelho', 'status', 'valor', 'previsaoEntrega'])
+        && order.keys().hasAll(['protocolo', 'aparelho', 'status', 'valor', 'previsaoEntrega'])
+        && order.protocolo is string
+        && order.aparelho is string
+        && order.status == 'novo'
+        && order.valor == null
+        && order.previsaoEntrega is string;
+    }
+
+    match /acompanhamentos/{id} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if isAdmin() || (request.auth == null
+        && request.resource.data.keys().hasOnly(['pedidos', 'atualizadoEm'])
+        && request.resource.data.keys().hasAll(['pedidos', 'atualizadoEm'])
+        && request.resource.data.pedidos is list
+        && request.resource.data.pedidos.size() == 1
+        && validTrackingOrder(request.resource.data.pedidos[0]));
+      allow update: if isAdmin() || (request.auth == null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pedidos', 'atualizadoEm'])
+        && request.resource.data.pedidos is list
+        && request.resource.data.pedidos.size() == resource.data.pedidos.size() + 1
+        && validTrackingOrder(request.resource.data.pedidos[resource.data.pedidos.size()]));
+      allow delete: if isAdmin();
+    }
+  }
+}
