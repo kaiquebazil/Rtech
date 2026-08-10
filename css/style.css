@@ -526,9 +526,13 @@ body {
   height: 82px;
 }
 .brand-logo {
-  height: 54px;
+  height: auto;
+  min-height: 54px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
 }
 .brand-logo img {
   display: block;
@@ -536,6 +540,14 @@ body {
   width: 170px;
   object-fit: cover;
   object-position: center;
+}
+.company-cnpj {
+  color: #c8d4ca;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .admin-link {
   border-bottom-color: #93b798;
