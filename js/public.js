@@ -5,7 +5,10 @@ const $ = selector => document.querySelector(selector);
 const form = $("#quoteForm");
 const message = $("#formMessage");
 const submit = $("#submitButton");
+const successModal = $("#successModal");
+const legacySuccessView = $("#successView");
 const MAX_SIZE = 8 * 1024 * 1024;
+const STORE_WHATSAPP = "5521977297049";
 
 $("#year").textContent = new Date().getFullYear();
 $("#marca").addEventListener("change", event => $("#outraMarcaLabel").classList.toggle("hidden", event.target.value !== "Outro"));
@@ -20,6 +23,15 @@ document.querySelectorAll(".photo-slot").forEach(slot => {
 });
 function validateImage(file) { if (!file.type.startsWith("image/")) return showMessage("Envie apenas arquivos de imagem.", "error"), false; if (file.size > MAX_SIZE) return showMessage("Cada foto deve ter no máximo 8 MB.", "error"), false; return true; }
 function showMessage(text, type) { message.textContent = text; message.className = `form-message ${type}`; }
+function showConfirmation() {
+  if (successModal && typeof successModal.showModal === "function") {
+    successModal.showModal();
+    return;
+  }
+  // Compatibilidade para a página antiga, enquanto o novo index.html não foi publicado.
+  $("#formView")?.classList.add("hidden");
+  legacySuccessView?.classList.remove("hidden");
+}
 function selectedServices() { return [...document.querySelectorAll("#services input:checked")].map(input => input.value); }
 function formIsValid() {
   const required = [["#nome", "Informe seu nome completo."], ["#telefone", "Informe seu telefone."], ["#marca", "Selecione a marca do aparelho."], ["#modelo", "Informe o modelo do aparelho."]];
@@ -30,17 +42,40 @@ function formIsValid() {
   if (selectedServices().includes("Outro") && !$("#outroServico").value.trim()) return showMessage("Descreva o outro serviço solicitado.", "error"), false;
   return true;
 }
+async function openImageForCompression(file) {
+  if (typeof createImageBitmap === "function") {
+    const image = await createImageBitmap(file);
+    return { image, cleanup: () => image.close?.() };
+  }
+  const url = URL.createObjectURL(file);
+  try {
+    const image = await new Promise((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error("Não foi possível abrir a imagem selecionada."));
+      element.src = url;
+    });
+    return { image, cleanup: () => URL.revokeObjectURL(url) };
+  } catch (error) {
+    URL.revokeObjectURL(url);
+    throw error;
+  }
+}
 async function compressImage(file) {
-  const image = await createImageBitmap(file);
+  const { image, cleanup } = await openImageForCompression(file);
   const presets = [[1200, .76], [900, .68], [720, .60], [600, .52]];
-  for (const [max, quality] of presets) {
-    const ratio = Math.min(1, max / Math.max(image.width, image.height));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.round(image.width * ratio);
-    canvas.height = Math.round(image.height * ratio);
-    canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
-    if (blob && blob.size <= 300 * 1024) return blob;
+  try {
+    for (const [max, quality] of presets) {
+      const ratio = Math.min(1, max / Math.max(image.width, image.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.width * ratio);
+      canvas.height = Math.round(image.height * ratio);
+      canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+      if (blob && blob.size <= 300 * 1024) return blob;
+    }
+  } finally {
+    cleanup();
   }
   throw new Error("Imagem muito grande para o modo gratuito.");
 }
@@ -67,22 +102,42 @@ async function photoToDataUrl(file) {
   });
 }
 async function trackingId(phone) {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(phone.replace(/\D/g, "")));
-  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+  const value = phone.replace(/\D/g, "");
+  if (globalThis.crypto?.subtle) {
+    const digest = await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+    return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+  }
+  let hash = 0x811c9dc5;
+  for (const character of value) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return `legacy-${(hash >>> 0).toString(16).padStart(8, "0")}`;
+}
+function buildWhatsAppUrl({ protocol, name, phone, brand, model, services, otherService, observation }) {
+  const details = [
+    `*Novo pedido de orçamento — ${protocol}*`, `*Cliente:* ${name}`, `*Telefone:* ${phone}`,
+    `*Aparelho:* ${brand} ${model}`, `*Serviços:* ${services.join(", ")}`,
+    otherService ? `*Outro serviço:* ${otherService}` : "", `*Observação:* ${observation || "Não informada"}`,
+    "*Fotos:* enviadas pelo formulário."
+  ].filter(Boolean).join("\n");
+  return `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(details)}`;
 }
 form.addEventListener("submit", async event => { event.preventDefault(); if (!isConfigured) return showMessage("O Firebase ainda não foi configurado. Consulte o README.", "error"); if (!formIsValid() || !navigator.onLine) return !navigator.onLine && showMessage("Você está sem conexão. Tente novamente quando estiver online.", "error");
   submit.disabled = true; submit.querySelector("span").textContent = "Enviando orçamento..."; showMessage("", "");
-  try { const protocol = await reserveProtocol(); const [fotoFrente, fotoTraseira] = await Promise.all([photoToDataUrl($("#fotoFrente").files[0]), photoToDataUrl($("#fotoTraseira").files[0])]); const services = selectedServices(); const phone = $("#telefone").value.trim(); const trackerId = await trackingId(phone); await runTransaction(db, async transaction => { const orderRef = doc(collection(db, "orcamentos")); const trackerRef = doc(db, "acompanhamentos", trackerId); const trackerSnapshot = await transaction.get(trackerRef); const brand = $("#marca").value === "Outro" ? $("#outraMarca").value.trim() : $("#marca").value; const trackingOrder = { protocolo: protocol, aparelho: `${brand} ${$("#modelo").value.trim()}`, status: "novo", valor: null, previsaoEntrega: "" }; const pedidos = trackerSnapshot.exists() ? [...(trackerSnapshot.data().pedidos || []), trackingOrder] : [trackingOrder]; transaction.set(orderRef, { protocolo: protocol, nome: $("#nome").value.trim(), telefone: phone, marca: brand, modelo: $("#modelo").value.trim(), fotoFrente, fotoTraseira, servicos: services, outroServico: services.includes("Outro") ? $("#outroServico").value.trim() : "", observacao: $("#observacao").value.trim(), valor: null, status: "novo", criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() }); transaction.set(trackerRef, { pedidos, atualizadoEm: serverTimestamp() }); }); $("#protocolValue").textContent = protocol; $("#trackOrderLink").href = "acompanhar.html"; $("#formView").classList.add("hidden"); $("#successView").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" });
+  try { const protocol = await reserveProtocol(); const [fotoFrente, fotoTraseira] = await Promise.all([photoToDataUrl($("#fotoFrente").files[0]), photoToDataUrl($("#fotoTraseira").files[0])]); const services = selectedServices(); const phone = $("#telefone").value.trim(); const name = $("#nome").value.trim(); const brand = $("#marca").value === "Outro" ? $("#outraMarca").value.trim() : $("#marca").value; const model = $("#modelo").value.trim(); const otherService = services.includes("Outro") ? $("#outroServico").value.trim() : ""; const observation = $("#observacao").value.trim(); const trackerId = await trackingId(phone); await runTransaction(db, async transaction => { const orderRef = doc(collection(db, "orcamentos")); const trackerRef = doc(db, "acompanhamentos", trackerId); const trackerSnapshot = await transaction.get(trackerRef); const trackingOrder = { protocolo: protocol, aparelho: `${brand} ${model}`, status: "novo", valor: null, previsaoEntrega: "" }; const pedidos = trackerSnapshot.exists() ? [...(trackerSnapshot.data().pedidos || []), trackingOrder] : [trackingOrder]; transaction.set(orderRef, { protocolo: protocol, nome: name, telefone: phone, marca: brand, modelo: model, fotoFrente, fotoTraseira, servicos: services, outroServico: otherService, observacao: observation, valor: null, status: "novo", criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() }); transaction.set(trackerRef, { pedidos, atualizadoEm: serverTimestamp() }); }); const whatsappUrl = buildWhatsAppUrl({ protocol, name, phone, brand, model, services, otherService, observation }); $("#protocolValue")?.textContent = protocol; if ($("#trackOrderLink")) $("#trackOrderLink").href = "acompanhar.html"; if ($("#whatsappFallback")) $("#whatsappFallback").href = whatsappUrl; showConfirmation(); window.open(whatsappUrl, "_blank", "noopener");
   } catch (error) {
     console.error(error);
     const code = error.code || "";
     let text = "Não foi possível enviar agora. Tente novamente em instantes.";
-    if (error.message.includes("Contador") || code === "firestore/failed-precondition") text = "O contador de protocolos deve existir no Firebase e o campo 'ultimo' precisa ser do tipo Número (ex.: 0).";
+    if (error.message?.includes("Contador") || code === "firestore/failed-precondition") text = "O contador de protocolos deve existir no Firebase e o campo 'ultimo' precisa ser do tipo Número (ex.: 0).";
     if (code === "permission-denied" || code === "firestore/permission-denied") text = "O Firestore bloqueou o envio. Publique a versão atual de firestore.rules e tente novamente.";
-    if (error.message.includes("Imagem muito grande")) text = "Uma das fotos ficou grande mesmo após a compressão. Escolha uma imagem mais simples ou tire outra foto.";
+    if (error.message?.includes("Imagem muito grande") || code === "firestore/resource-exhausted") text = "As fotos deixaram o pedido grande demais. Escolha fotos menores ou mais simples.";
+    if (code === "firestore/unavailable" || code === "firestore/deadline-exceeded") text = "Não foi possível conectar ao Firestore agora. Verifique a internet e tente novamente.";
+    if (text === "Não foi possível enviar agora. Tente novamente em instantes.") text += ` Código: ${code || error.name || "desconhecido"}. Detalhe: ${error.message || "não informado"}.`;
     showMessage(text, "error");
     submit.disabled = false;
     submit.querySelector("span").textContent = "Solicitar orçamento";
   }
 });
-$("#newQuote").addEventListener("click", () => { form.reset(); document.querySelectorAll(".photo-slot").forEach(slot => slot.classList.remove("has-image")); $("#successView").classList.add("hidden"); $("#formView").classList.remove("hidden"); $("#outraMarcaLabel").classList.add("hidden"); $("#outroServicoLabel").classList.add("hidden"); });
+$("#newQuote")?.addEventListener("click", () => { successModal?.close(); legacySuccessView?.classList.add("hidden"); $("#formView")?.classList.remove("hidden"); form.reset(); document.querySelectorAll(".photo-slot").forEach(slot => slot.classList.remove("has-image")); $("#outraMarcaLabel").classList.add("hidden"); $("#outroServicoLabel").classList.add("hidden"); });

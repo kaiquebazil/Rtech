@@ -4,7 +4,9 @@ service cloud.firestore {
     function isAdmin() { return request.auth != null; }
 
     match /orcamentos/{id} {
-      allow create: if request.auth == null
+      // O formulário público pode ser aberto no mesmo navegador da área
+      // administrativa. Nesse caso, o Firebase preserva a sessão do admin.
+      allow create: if (request.auth == null || isAdmin())
         && request.resource.data.keys().hasOnly(['protocolo', 'nome', 'telefone', 'marca', 'modelo', 'fotoFrente', 'fotoTraseira', 'servicos', 'outroServico', 'observacao', 'valor', 'status', 'criadoEm', 'atualizadoEm'])
         && request.resource.data.nome is string
         && request.resource.data.nome.size() > 1
