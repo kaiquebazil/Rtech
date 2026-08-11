@@ -538,6 +538,30 @@ footer {
   align-items: center;
   gap: 18px;
 }
+.header-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-left: auto;
+  margin-right: 24px;
+  color: #bdc8bf;
+  font-size: 10px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.header-contact a {
+  color: #f5f8f5;
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-contact a:hover {
+  color: var(--lime);
+}
+.header-contact span + span {
+  padding-left: 12px;
+  border-left: 1px solid #ffffff33;
+}
 .track-link {
   display: inline-block;
   margin: 0 auto 14px;
@@ -682,11 +706,28 @@ footer {
 }
 @media (max-width: 500px) {
   .site-header {
-    padding: 0 14px;
+    height: auto;
+    min-height: 82px;
+    padding: 14px;
+    flex-wrap: wrap;
+    row-gap: 0;
   }
   .brand-logo img {
     width: 126px;
     height: 38px;
+  }
+  .header-contact {
+    order: 3;
+    width: 100%;
+    margin: 12px 0 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    white-space: normal;
+    text-align: center;
+  }
+  .header-contact span + span {
+    padding-left: 0;
+    border-left: 0;
   }
   .header-links {
     gap: 0;
