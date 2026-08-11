@@ -1,26 +1,312 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Solicite o orçamento do seu celular online.">
-  <title>R Tech | Orçamento online</title><link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header class="site-header"><a class="brand brand-logo" href="index.html" aria-label="R-TECH Assistência Técnica"><img src="assets/logo-rtech.png" alt="R-TECH Assistência Técnica"></a><div class="header-contact"><a href="https://wa.me/5521970997340" target="_blank" rel="noopener">(21) 97099-7340</a><a href="https://instagram.com/r.tech1993" target="_blank" rel="noopener">@r.tech1993</a><span>Rua José Hipólito de Oliveira · Nova Iguaçu</span><span>CNPJ: 22.805.570/0001-91</span></div><div class="header-links"><a class="admin-link" href="acompanhar.html">Acompanhar orçamento</a><a class="admin-link" href="login.html">Área administrativa</a></div></header>
-  <main class="public-main">
-    <section class="hero"><p class="eyebrow">CNPJ: 22.805.570/0001-91</p><h1>Seu celular merece<br><em>o melhor cuidado.</em></h1><p>Faça seu orçamento online de forma rápida, simples e segura.</p><a class="hero-cta" href="#quote-section">Fazer orçamento <span>→</span></a><div class="hero-points"><span>✓ Atendimento rápido</span><span>✓ Sem cadastro</span><span>✓ Especialistas</span></div></section>
-    <section class="quote-card" id="quote-section">
-      <div id="formView"><div class="card-heading"><span class="step">01</span><div><h2>Solicite seu orçamento</h2><p>Preencha os dados abaixo. Leva menos de 2 minutos.</p></div></div>
-      <form id="quoteForm" novalidate>
-        <fieldset><legend>Seus dados</legend><div class="field-grid"><label>Nome completo<input id="nome" maxlength="100" autocomplete="name" required placeholder="Como podemos chamar você?"></label><label>Telefone / WhatsApp<input id="telefone" inputmode="tel" maxlength="20" autocomplete="tel" required placeholder="(00) 00000-0000"></label></div></fieldset>
-        <fieldset><legend>Seu aparelho</legend><div class="field-grid"><label>Marca<select id="marca" required><option value="">Selecione a marca</option><option>Apple</option><option>Samsung</option><option>Motorola</option><option>Xiaomi</option><option>Redmi</option><option>Realme</option><option>Asus</option><option>LG</option><option>Nokia</option><option>Huawei</option><option value="Outro">Outro</option></select></label><label>Modelo<input id="modelo" maxlength="80" required placeholder="Ex.: Galaxy S23"></label></div><label class="hidden" id="outraMarcaLabel">Qual é a marca?<input id="outraMarca" maxlength="50" placeholder="Digite a marca"></label></fieldset>
-        <fieldset><legend>Fotos do aparelho <small>Obrigatórias</small></legend><p class="field-hint">Envie fotos nítidas para conseguirmos avaliar melhor.</p><div class="photo-grid"><div class="photo-slot" data-slot="frente"><input id="fotoFrente" type="file" accept="image/*" required><div class="photo-empty"><b>⌁</b><strong>Foto da frente</strong><span>Toque para adicionar</span></div><img alt="Prévia da frente"><span class="photo-selected">✓ Imagem selecionada</span><button type="button" class="remove-photo" aria-label="Remover foto">×</button></div><div class="photo-slot" data-slot="traseira"><input id="fotoTraseira" type="file" accept="image/*" required><div class="photo-empty"><b>⌁</b><strong>Foto traseira</strong><span>Toque para adicionar</span></div><img alt="Prévia da traseira"><span class="photo-selected">✓ Imagem selecionada</span><button type="button" class="remove-photo" aria-label="Remover foto">×</button></div></div><p class="note">💡 Você pode escolher uma imagem da galeria ou tirar uma nova foto.</p></fieldset>
-        <fieldset><legend>Qual serviço você precisa?</legend><p class="field-hint">Selecione uma ou mais opções.</p><div class="service-grid" id="services"><label><input type="checkbox" value="Troca de tela"><span>Troca de tela</span></label><label><input type="checkbox" value="Troca de bateria"><span>Troca de bateria</span></label><label><input type="checkbox" value="Troca de conector de carga"><span>Conector de carga</span></label><label><input type="checkbox" value="Troca de câmera"><span>Troca de câmera</span></label><label><input type="checkbox" value="Troca de alto-falante"><span>Alto-falante</span></label><label><input type="checkbox" value="Troca de microfone"><span>Microfone</span></label><label><input type="checkbox" value="Troca de botão"><span>Botões</span></label><label><input type="checkbox" value="Troca de tampa traseira"><span>Tampa traseira</span></label><label><input type="checkbox" value="Película"><span>Película</span></label><label><input type="checkbox" value="Diagnóstico"><span>Diagnóstico</span></label><label><input type="checkbox" value="Manutenção de software"><span>Software</span></label><label><input type="checkbox" value="Formatação"><span>Formatação</span></label><label class="other-service"><input id="outroServicoCheck" type="checkbox" value="Outro"><span>Outro</span></label></div><label class="hidden" id="outroServicoLabel">Qual serviço?<input id="outroServico" maxlength="120" placeholder="Descreva o serviço"></label></fieldset>
-        <fieldset><legend>Conte um pouco mais <small>Opcional</small></legend><label>Descreva o problema<textarea id="observacao" maxlength="800" placeholder="Ex.: A tela quebrou depois de uma queda."></textarea><span class="counter"><span id="charCount">0</span>/800</span></label></fieldset>
-        <div id="formMessage" class="form-message" role="alert"></div><button id="submitButton" class="primary-button" type="submit"><span>Enviar orçamento pelo WhatsApp</span><i>◉</i></button><p class="privacy">Seu orçamento será salvo com segurança antes de abrirmos o WhatsApp.</p>
-      </form></div>
-      <section id="successView" class="success-view hidden"><div class="success-icon">✓</div><p class="eyebrow">ORÇAMENTO SALVO</p><h2>Agora vamos abrir o WhatsApp.</h2><p>Seu cadastro e suas fotos foram salvos com sucesso. A mensagem para a R-TECH já está pronta para você enviar.</p><div class="protocol"><small>SEU PROTOCOLO</small><strong id="protocolValue">ORC-000001</strong></div><a id="whatsappFallback" class="whatsapp-fallback" target="_blank" rel="noopener">Continuar pelo WhatsApp</a><a id="trackOrderLink" class="track-link" href="acompanhar.html">Acompanhar este orçamento</a><button id="newQuote" class="secondary-button">Novo orçamento</button></section>
-    </section>
-  </main><footer class="site-footer"><div class="footer-contact"><a href="https://wa.me/5521970997340" target="_blank" rel="noopener" aria-label="Falar com a R-Tech pelo WhatsApp">(21) 97099-7340</a><a href="https://instagram.com/r.tech1993" target="_blank" rel="noopener" aria-label="Instagram da R-Tech">@r.tech1993</a></div><div class="footer-divider" aria-hidden="true"></div><div class="footer-company"><address>Rua José Hipólito de Oliveira<br>Cameleiro · Nova Iguaçu</address><p>CNPJ: 22.805.570/0001-91</p></div></footer>
-  <script type="module" src="js/public.js"></script>
-</body></html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Solicite o orçamento do seu celular online."
+    />
+    <title>R Tech | Orçamento online</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a
+        class="brand brand-logo"
+        href="index.html"
+        aria-label="R-TECH Assistência Técnica"
+        ><img src="assets/logo-rtech.png" alt="R-TECH Assistência Técnica"
+      /></a>
+      <div class="header-contact">
+        <a href="https://wa.me/5521970997340" target="_blank" rel="noopener"
+          >(21) 97099-7340</a
+        ><a
+          href="https://instagram.com/r.tech1993"
+          target="_blank"
+          rel="noopener"
+          >@r.tech1993</a
+        ><span>Rua José Hipólito de Oliveira · Nova Iguaçu</span
+        >
+      </div>
+      <div class="header-links">
+        <a class="admin-link" href="acompanhar.html">Acompanhar orçamento</a
+        ><a class="admin-link" href="login.html">Área administrativa</a>
+      </div>
+    </header>
+    <main class="public-main">
+      <section class="hero">
+        <p class="eyebrow">CNPJ: 22.805.570/0001-91</p>
+        <h1>Seu celular merece<br /><em>o melhor cuidado.</em></h1>
+        <p>Faça seu orçamento online de forma rápida, simples e segura.</p>
+        <a class="hero-cta" href="#quote-section"
+          >Fazer orçamento <span>→</span></a
+        >
+        <div class="hero-points">
+          <span>✓ Atendimento rápido</span><span>✓ Sem cadastro</span
+          ><span>✓ Especialistas</span>
+        </div>
+      </section>
+      <section class="quote-card" id="quote-section">
+        <div id="formView">
+          <div class="card-heading">
+            <span class="step">01</span>
+            <div>
+              <h2>Solicite seu orçamento</h2>
+              <p>Preencha os dados abaixo. Leva menos de 2 minutos.</p>
+            </div>
+          </div>
+          <form id="quoteForm" novalidate>
+            <fieldset>
+              <legend>Seus dados</legend>
+              <div class="field-grid">
+                <label
+                  >Nome completo<input
+                    id="nome"
+                    maxlength="100"
+                    autocomplete="name"
+                    required
+                    placeholder="Como podemos chamar você?" /></label
+                ><label
+                  >Telefone / WhatsApp<input
+                    id="telefone"
+                    inputmode="tel"
+                    maxlength="20"
+                    autocomplete="tel"
+                    required
+                    placeholder="(00) 00000-0000"
+                /></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Seu aparelho</legend>
+              <div class="field-grid">
+                <label
+                  >Marca<select id="marca" required>
+                    <option value="">Selecione a marca</option>
+                    <option>Apple</option>
+                    <option>Samsung</option>
+                    <option>Motorola</option>
+                    <option>Xiaomi</option>
+                    <option>Redmi</option>
+                    <option>Realme</option>
+                    <option>Asus</option>
+                    <option>LG</option>
+                    <option>Nokia</option>
+                    <option>Huawei</option>
+                    <option value="Outro">Outro</option>
+                  </select></label
+                ><label
+                  >Modelo<input
+                    id="modelo"
+                    maxlength="80"
+                    required
+                    placeholder="Ex.: Galaxy S23"
+                /></label>
+              </div>
+              <label class="hidden" id="outraMarcaLabel"
+                >Qual é a marca?<input
+                  id="outraMarca"
+                  maxlength="50"
+                  placeholder="Digite a marca"
+              /></label>
+            </fieldset>
+            <fieldset>
+              <legend>Fotos do aparelho <small>Obrigatórias</small></legend>
+              <p class="field-hint">
+                Envie fotos nítidas para conseguirmos avaliar melhor.
+              </p>
+              <div class="photo-grid">
+                <div class="photo-slot" data-slot="frente">
+                  <input
+                    id="fotoFrente"
+                    type="file"
+                    accept="image/*"
+                    required
+                  />
+                  <div class="photo-empty">
+                    <b>⌁</b><strong>Foto da frente</strong
+                    ><span>Toque para adicionar</span>
+                  </div>
+                  <img alt="Prévia da frente" /><span class="photo-selected"
+                    >✓ Imagem selecionada</span
+                  ><button
+                    type="button"
+                    class="remove-photo"
+                    aria-label="Remover foto"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div class="photo-slot" data-slot="traseira">
+                  <input
+                    id="fotoTraseira"
+                    type="file"
+                    accept="image/*"
+                    required
+                  />
+                  <div class="photo-empty">
+                    <b>⌁</b><strong>Foto traseira</strong
+                    ><span>Toque para adicionar</span>
+                  </div>
+                  <img alt="Prévia da traseira" /><span class="photo-selected"
+                    >✓ Imagem selecionada</span
+                  ><button
+                    type="button"
+                    class="remove-photo"
+                    aria-label="Remover foto"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+              <p class="note">
+                💡 Você pode escolher uma imagem da galeria ou tirar uma nova
+                foto.
+              </p>
+            </fieldset>
+            <fieldset>
+              <legend>Qual serviço você precisa?</legend>
+              <p class="field-hint">Selecione uma ou mais opções.</p>
+              <div class="service-grid" id="services">
+                <label
+                  ><input type="checkbox" value="Troca de tela" /><span
+                    >Troca de tela</span
+                  ></label
+                ><label
+                  ><input type="checkbox" value="Troca de bateria" /><span
+                    >Troca de bateria</span
+                  ></label
+                ><label
+                  ><input
+                    type="checkbox"
+                    value="Troca de conector de carga"
+                  /><span>Conector de carga</span></label
+                ><label
+                  ><input type="checkbox" value="Troca de câmera" /><span
+                    >Troca de câmera</span
+                  ></label
+                ><label
+                  ><input type="checkbox" value="Troca de alto-falante" /><span
+                    >Alto-falante</span
+                  ></label
+                ><label
+                  ><input type="checkbox" value="Troca de microfone" /><span
+                    >Microfone</span
+                  ></label
+                ><label
+                  ><input type="checkbox" value="Troca de botão" /><span
+                    >Botões</span
+                  ></label
+                ><label
+                  ><input
+                    type="checkbox"
+                    value="Troca de tampa traseira"
+                  /><span>Tampa traseira</span></label
+                ><label
+                  ><input type="checkbox" value="Película" /><span
+                    >Película</span
+                  ></label
+                ><label
+                  ><input type="checkbox" value="Diagnóstico" /><span
+                    >Diagnóstico</span
+                  ></label
+                ><label
+                  ><input type="checkbox" value="Manutenção de software" /><span
+                    >Software</span
+                  ></label
+                ><label
+                  ><input type="checkbox" value="Formatação" /><span
+                    >Formatação</span
+                  ></label
+                ><label class="other-service"
+                  ><input
+                    id="outroServicoCheck"
+                    type="checkbox"
+                    value="Outro"
+                  /><span>Outro</span></label
+                >
+              </div>
+              <label class="hidden" id="outroServicoLabel"
+                >Qual serviço?<input
+                  id="outroServico"
+                  maxlength="120"
+                  placeholder="Descreva o serviço"
+              /></label>
+            </fieldset>
+            <fieldset>
+              <legend>Conte um pouco mais <small>Opcional</small></legend>
+              <label
+                >Descreva o problema<textarea
+                  id="observacao"
+                  maxlength="800"
+                  placeholder="Ex.: A tela quebrou depois de uma queda."
+                ></textarea
+                ><span class="counter"
+                  ><span id="charCount">0</span>/800</span
+                ></label
+              >
+            </fieldset>
+            <div id="formMessage" class="form-message" role="alert"></div>
+            <button id="submitButton" class="primary-button" type="submit">
+              <span>Enviar orçamento pelo WhatsApp</span><i>◉</i>
+            </button>
+            <p class="privacy">
+              Seu orçamento será salvo com segurança antes de abrirmos o
+              WhatsApp.
+            </p>
+          </form>
+        </div>
+        <section id="successView" class="success-view hidden">
+          <div class="success-icon">✓</div>
+          <p class="eyebrow">ORÇAMENTO SALVO</p>
+          <h2>Agora vamos abrir o WhatsApp.</h2>
+          <p>
+            Seu cadastro e suas fotos foram salvos com sucesso. A mensagem para
+            a R-TECH já está pronta para você enviar.
+          </p>
+          <div class="protocol">
+            <small>SEU PROTOCOLO</small
+            ><strong id="protocolValue">ORC-000001</strong>
+          </div>
+          <a
+            id="whatsappFallback"
+            class="whatsapp-fallback"
+            target="_blank"
+            rel="noopener"
+            >Continuar pelo WhatsApp</a
+          ><a id="trackOrderLink" class="track-link" href="acompanhar.html"
+            >Acompanhar este orçamento</a
+          ><button id="newQuote" class="secondary-button">
+            Novo orçamento
+          </button>
+        </section>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="footer-contact">
+        <a
+          href="https://wa.me/5521970997340"
+          target="_blank"
+          rel="noopener"
+          aria-label="Falar com a R-Tech pelo WhatsApp"
+          >(21) 97099-7340</a
+        ><a
+          href="https://instagram.com/r.tech1993"
+          target="_blank"
+          rel="noopener"
+          aria-label="Instagram da R-Tech"
+          >@r.tech1993</a
+        >
+      </div>
+      <div class="footer-divider" aria-hidden="true"></div>
+      <div class="footer-company">
+        <address>
+          Rua José Hipólito de Oliveira<br />Cameleiro · Nova Iguaçu
+        </address>
+        <p>CNPJ: 22.805.570/0001-91</p>
+      </div>
+    </footer>
+    <script type="module" src="js/public.js"></script>
+  </body>
+</html>
