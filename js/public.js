@@ -8,7 +8,7 @@ const submit = $("#submitButton");
 const successModal = $("#successModal");
 const legacySuccessView = $("#successView");
 const MAX_SIZE = 8 * 1024 * 1024;
-const STORE_WHATSAPP = "5521977297049";
+const STORE_WHATSAPP = "5521970997340";
 
 $("#year").textContent = new Date().getFullYear();
 $("#marca").addEventListener("change", event => $("#outraMarcaLabel").classList.toggle("hidden", event.target.value !== "Outro"));
