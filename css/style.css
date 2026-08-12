@@ -27,6 +27,9 @@
 * {
   box-sizing: border-box;
 }
+.kaique img {
+  width: 15px;
+}
 body {
   margin: 0;
   background: var(--paper);
